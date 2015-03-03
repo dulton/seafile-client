@@ -4,14 +4,17 @@
 #include <algorithm>            // std::sort
 
 #include "api/server-repo.h"
+
 #include "utils/utils.h"
 #include "seafile-applet.h"
 #include "main-window.h"
 #include "rpc/rpc-client.h"
+#include "rpc/clone-task.h"
+#include "repo-service.h"
+
 #include "repo-item.h"
 #include "repo-tree-view.h"
 #include "repo-tree-model.h"
-#include "rpc/clone-task.h"
 
 namespace {
 
@@ -87,7 +90,7 @@ void RepoTreeModel::clear()
 
 void RepoTreeModel::setRepos(const std::vector<ServerRepo>& repos)
 {
-    int i, n = repos.size();
+    size_t i, n = repos.size();
     // removeReposDeletedOnServer(repos);
 
     clear();
@@ -107,9 +110,8 @@ void RepoTreeModel::setRepos(const std::vector<ServerRepo>& repos)
             checkGroupRepo(repo);
         }
 
-        LocalRepo local_repo;
-        if (seafApplet->rpcClient()->getLocalRepo(repo.id, &local_repo) == 0)
-          checkSyncedRepo(repo);
+        if (repo.isSubfolder())
+            checkSyncedRepo(repo);
 
         map[repo.id] = repo;
     }

@@ -233,6 +233,9 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
     // Paint repo sharing owner for private share
     if (static_cast<RepoCategoryItem*>(item->parent())->categoryIndex() ==
         RepoTreeModel::CAT_INDEX_SHARED_REPOS) {
+    }
+    if (static_cast<RepoCategoryItem*>(item->parent())->categoryIndex() ==
+        RepoTreeModel::CAT_INDEX_SHARED_REPOS) {
         painter->save();
 
         QString shared_from_owner = tr(", %1").arg(item->repo().owner.split('@').front());

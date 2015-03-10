@@ -250,40 +250,40 @@ FinderSyncClient *client_ = nullptr;
     [[FIFinderSyncController defaultController]
              setBadgeImage:[NSImage imageNamed:NSImageNameStatusNone]
                      label:@"Status Disabled"
-        forBadgeIdentifier:@"DISABLED"];
+        forBadgeIdentifier:badgeIdentifiers[LocalRepo::SYNC_STATE_DISABLED]];
     // WAITING,
     [[FIFinderSyncController defaultController]
              setBadgeImage:[NSImage
                                imageNamed:NSImageNameStatusPartiallyAvailable]
                      label:@"Status Waiting"
-        forBadgeIdentifier:@"WAITING"];
+        forBadgeIdentifier:badgeIdentifiers[LocalRepo::SYNC_STATE_WAITING]];
     // INIT,
     [[FIFinderSyncController defaultController]
              setBadgeImage:[NSImage
                                imageNamed:NSImageNameStatusPartiallyAvailable]
                      label:@"Status Init"
-        forBadgeIdentifier:@"INIT"];
+        forBadgeIdentifier:badgeIdentifiers[LocalRepo::SYNC_STATE_INIT]];
     // ING,
     [[FIFinderSyncController defaultController]
              setBadgeImage:[NSImage
                                imageNamed:NSImageNameStatusPartiallyAvailable]
                      label:@"Status Ing"
-        forBadgeIdentifier:@"ING"];
+        forBadgeIdentifier:badgeIdentifiers[LocalRepo::SYNC_STATE_ING]];
     // DONE,
     [[FIFinderSyncController defaultController]
              setBadgeImage:[NSImage imageNamed:NSImageNameStatusAvailable]
                      label:@"Status Done"
-        forBadgeIdentifier:@"DONE"];
+        forBadgeIdentifier:badgeIdentifiers[LocalRepo::SYNC_STATE_DONE]];
     // ERROR,
     [[FIFinderSyncController defaultController]
              setBadgeImage:[NSImage imageNamed:NSImageNameCaution]
                      label:@"Status Error"
-        forBadgeIdentifier:@"ERROR"];
+        forBadgeIdentifier:badgeIdentifiers[LocalRepo::SYNC_STATE_ERROR]];
     // UNKNOWN,
     [[FIFinderSyncController defaultController]
              setBadgeImage:[NSImage imageNamed:NSImageNameStatusNone]
                      label:@"Status Unknown"
-        forBadgeIdentifier:@"UNKOWN"];
+        forBadgeIdentifier:badgeIdentifiers[LocalRepo::SYNC_STATE_UNKNOWN]];
   }
 }
 

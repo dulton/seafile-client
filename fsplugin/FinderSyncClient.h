@@ -19,13 +19,13 @@ struct LocalRepo {
   LocalRepo(const LocalRepo &) = delete;
   LocalRepo(LocalRepo &&) = default;
   enum SyncState {
-    SYNC_STATE_DISABLED,
-    SYNC_STATE_WAITING,
-    SYNC_STATE_INIT,
-    SYNC_STATE_ING,
-    SYNC_STATE_DONE,
-    SYNC_STATE_ERROR,
-    SYNC_STATE_UNKNOWN,
+    SYNC_STATE_DISABLED = 0,
+    SYNC_STATE_WAITING = 1,
+    SYNC_STATE_INIT = 2,
+    SYNC_STATE_ING = 3,
+    SYNC_STATE_DONE = 4,
+    SYNC_STATE_ERROR = 5,
+    SYNC_STATE_UNKNOWN = 6,
   };
   std::string worktree;
   SyncState status;

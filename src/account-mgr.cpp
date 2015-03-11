@@ -12,6 +12,7 @@
 #include "utils/utils.h"
 #include "api/api-error.h"
 #include "api/requests.h"
+#include "repo-service.h"
 
 namespace {
 
@@ -119,6 +120,8 @@ int AccountManager::saveAccount(const Account& account)
 
 int AccountManager::removeAccount(const Account& account)
 {
+    RepoService::instance()->onAccountRemoval(account);
+
     QString url = account.serverUrl.toEncoded().data();
 
     QString sql = "DELETE FROM Accounts WHERE url = '%1' AND username = '%2'";
@@ -172,6 +175,7 @@ bool AccountManager::setCurrentAccount(const Account& account)
 
 int AccountManager::replaceAccount(const Account& old_account, const Account& new_account)
 {
+    RepoService::instance()->onAccountChange(old_account, new_account);
     for (size_t i = 0; i < accounts_.size(); i++) {
         if (accounts_[i] == old_account) {
             accounts_[i] = new_account;

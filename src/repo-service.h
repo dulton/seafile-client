@@ -41,6 +41,8 @@ public:
                        const QString& path_in_repo,
                        QWidget *dialog_parent=0);
 
+    void onAccountChange(const Account& old_account, const Account& new_account);
+    void onAccountRemoval(const Account& old_account);
 public slots:
     void refresh();
 

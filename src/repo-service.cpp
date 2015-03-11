@@ -70,10 +70,11 @@ bool loadSyncedFolderCB(sqlite3_stmt *stmt, void *data)
 }
 
 // TODO: use lambda to replace this helper class if we are switching to C++11
-class ServerRepohasRepoID {
+template<class T>
+class RepohasRepoID {
 public:
-    ServerRepohasRepoID(const QString &repo_id) : repo_id_(repo_id) {}
-    bool operator()(const ServerRepo &repo) {
+    RepohasRepoID(const QString &repo_id) : repo_id_(repo_id) {}
+    bool operator()(const T &repo) {
         return repo.id == repo_id_;
     }
 
@@ -92,6 +93,8 @@ private:
     const QString& repo_id_;
 };
 
+// don't reply on this,
+// it is used for get repo request only
 std::vector<SyncedSubfolder> synced_subfolders_;
 
 } // namespace
@@ -182,7 +185,14 @@ void RepoService::refresh()
         sqlite_foreach_selected_row (synced_subfolder_db_, sql.toUtf8().data(),
                                      loadSyncedFolderCB, &synced_subfolders_);
 
-        // TODO filt outdated data according to local_repos
+        // if repo_id is no longer in the local repos list
+        for (size_t i = 0; i < synced_subfolders_.size(); ++i) {
+            RepohasRepoID<LocalRepo> helper(synced_subfolders_[i].repo_id());
+            std::vector<LocalRepo>::iterator pos = std::find_if(local_repos_.begin(), local_repos_.end(), helper);
+
+            if (pos == local_repos_.end())
+              removeSyncedSubfolder(synced_subfolders_[i].repo_id());
+        }
     }
 
     if (list_repo_req_) {
@@ -345,7 +355,7 @@ void RepoService::saveSyncedSubfolder(const ServerRepo& subfolder)
     const Account *account = &accounts.front();
 
     // if we have it before
-    ServerRepohasRepoID repo_helper(subfolder.id);
+    RepohasRepoID<ServerRepo> repo_helper(subfolder.id);
     std::vector<ServerRepo>::iterator pos = std::find_if(server_repos_.begin(), server_repos_.end(), repo_helper);
     if (pos == server_repos_.end()) {
         server_repos_.push_back(subfolder);
@@ -379,11 +389,38 @@ void RepoService::removeSyncedSubfolder(const QString& repo_id)
     SyncedSubfolderhasRepoID subfolder_helper(repo_id);
     synced_subfolders_.erase(std::remove_if(synced_subfolders_.begin(), synced_subfolders_.end(), subfolder_helper));
 
-    ServerRepohasRepoID repo_helper(repo_id);
+    RepohasRepoID<ServerRepo> repo_helper(repo_id);
     std::vector<ServerRepo>::iterator pos = std::remove_if(server_repos_.begin(), server_repos_.end(), repo_helper);
     if (pos != server_repos_.end() && pos->isSubfolder()) {
         server_repos_.erase(pos, server_repos_.end());
 
         emit refreshSuccess(server_repos_);
+    }
+}
+
+void RepoService::onAccountChange(const Account& old_account, const Account& new_account)
+{
+    if (synced_subfolder_db_) {
+        QString sql =
+            "UPDATE SyncedSubfolder "
+            "SET url = '%1', "
+            "    username = '%2' "
+            "WHERE url = '%3' "
+            "  AND username = '%4'";
+        sql = sql.arg(new_account.serverUrl.toEncoded().data())
+                 .arg(new_account.username)
+                 .arg(old_account.serverUrl.toEncoded().data())
+                 .arg(old_account.username);
+        sqlite_query_exec (synced_subfolder_db_, toCStr(sql));
+    }
+}
+
+void RepoService::onAccountRemoval(const Account& old_account)
+{
+    if (synced_subfolder_db_) {
+        QString sql = "DELETE FROM SyncedSubfolder WHERE url = '%1' AND username = '%2'";
+        sql = sql.arg(old_account.serverUrl.toEncoded().data())
+                 .arg(old_account.username);
+        sqlite_query_exec (synced_subfolder_db_, toCStr(sql));
     }
 }

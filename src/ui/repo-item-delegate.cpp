@@ -235,7 +235,7 @@ void RepoItemDelegate::paintRepoItem(QPainter *painter,
     QString extra_description;
     if (repo.isSubfolder()) {
         ServerRepo parent_repo = RepoService::instance()->getRepo(repo.parent_repo_id);
-        extra_description = tr(", path: %1, repo: %2").arg(repo.parent_path).arg(parent_repo.name);
+        extra_description = tr(", %1%2").arg(parent_repo.name).arg(repo.parent_path);
     }
     // Paint repo sharing owner for private share
     if (static_cast<RepoCategoryItem*>(item->parent())->categoryIndex() ==

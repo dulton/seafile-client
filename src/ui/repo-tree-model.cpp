@@ -110,7 +110,7 @@ void RepoTreeModel::setRepos(const std::vector<ServerRepo>& repos)
             checkGroupRepo(repo);
         }
 
-        if (repo.isSubfolder())
+        if (repo.isSubfolder() || seafApplet->rpcClient()->hasLocalRepo(repo.id))
             checkSyncedRepo(repo);
 
         map[repo.id] = repo;

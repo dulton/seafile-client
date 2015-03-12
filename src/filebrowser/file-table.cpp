@@ -287,12 +287,12 @@ void FileTableView::setupContextMenu()
         paste_action_->setEnabled(false);
     }
 
-    cancel_download_action_ = new QAction(tr("Cancel Download (&E)"), this);
+    cancel_download_action_ = new QAction(tr("Canc&el Download"), this);
     connect(cancel_download_action_, SIGNAL(triggered()),
             this, SLOT(onCancelDownload()));
     cancel_download_action_->setShortcut(Qt::ALT + Qt::Key_C);
 
-    sync_subdirectory_action_ = new QAction(tr("Sync this directory(&S)"), this);
+    sync_subdirectory_action_ = new QAction(tr("&Sync this directory"), this);
     connect(sync_subdirectory_action_, SIGNAL(triggered()),
             this, SLOT(onSyncSubdirectory()));
     sync_subdirectory_action_->setShortcut(Qt::ALT + Qt::Key_S);

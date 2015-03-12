@@ -50,7 +50,7 @@ DownloadRepoDialog::DownloadRepoDialog(const Account& account,
     if (!repo.isSubfolder())
         setWindowTitle(tr("Sync library \"%1\"").arg(repo_.name));
     else
-        setWindowTitle(tr("Sync subdirectory \"%1\"").arg(repo.parent_path));
+        setWindowTitle(tr("Sync folder \"%1\"").arg(repo.parent_path));
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     mRepoIcon->setPixmap(repo.getPixmap());

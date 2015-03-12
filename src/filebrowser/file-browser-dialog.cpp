@@ -985,14 +985,7 @@ void FileBrowserDialog::onDirentsMoveFailed(const ApiError& error)
 
 void FileBrowserDialog::onGetSyncSubdirectory(const QString &folder_name)
 {
-    bool ok;
-    QString name = QInputDialog::getText(this, tr("Create a new library"),
-        tr("Sublibrary name"), QLineEdit::Normal, folder_name, &ok);
-    name = name.trimmed();
-    if (!ok || name.isEmpty())
-        return;
-    const QString path = ::pathJoin(current_path_, folder_name);
-    data_mgr_->createSubrepo(name, repo_.id, path, QString());
+    data_mgr_->createSubrepo(folder_name, repo_.id, ::pathJoin(current_path_, folder_name), QString());
 }
 
 void FileBrowserDialog::onCreateSubrepoSuccess(const ServerRepo &repo)
@@ -1000,15 +993,19 @@ void FileBrowserDialog::onCreateSubrepoSuccess(const ServerRepo &repo)
     LocalRepo r;
 
     // if we have not synced before
-    if (seafApplet->rpcClient()->getLocalRepo(repo.id, &r) != 0 || !r.isValid()) {
+    bool has_local = false;
+    if (seafApplet->rpcClient()->getLocalRepo(repo.id, &r) == 0 && r.isValid()) {
+        has_local = true;
+    } else {
         // if we have not synced, do it
         // TODO improve it
         DownloadRepoDialog dialog(account_, repo, this);
 
-        dialog.exec();
+        has_local = dialog.exec() == QDialog::Accepted;
     }
 
-    RepoService::instance()->saveSyncedSubfolder(repo);
+    if (has_local)
+        RepoService::instance()->saveSyncedSubfolder(repo);
 }
 
 void FileBrowserDialog::onCreateSubrepoFailed(const ApiError&error)

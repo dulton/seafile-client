@@ -387,7 +387,7 @@ void RepoService::removeSyncedSubfolder(const QString& repo_id)
     sqlite_query_exec (synced_subfolder_db_, sql.toUtf8().data());
 
     SyncedSubfolderhasRepoID subfolder_helper(repo_id);
-    synced_subfolders_.erase(std::remove_if(synced_subfolders_.begin(), synced_subfolders_.end(), subfolder_helper));
+    synced_subfolders_.erase(std::remove_if(synced_subfolders_.begin(), synced_subfolders_.end(), subfolder_helper), synced_subfolders_.end());
 
     RepohasRepoID<ServerRepo> repo_helper(repo_id);
     std::vector<ServerRepo>::iterator pos = std::remove_if(server_repos_.begin(), server_repos_.end(), repo_helper);
